@@ -40,8 +40,8 @@ launchctl load ~/Library/LaunchAgents/com.daniel.morning-newspaper.plist
 launchd runs a missed 06:30 job as soon as the Mac wakes, so opening the lid prints the paper.
 `sudo pmset repeat wakeorpoweron MTWRFSU 06:25:00` wakes a plugged-in Mac on its own.
 
-## Option B (recommended): GitHub Actions + Epson Connect (laptop off for days)
-`.github/workflows/newspaper.yml` runs every morning on a free GitHub runner (Chrome preinstalled),
+## Option B: GitHub Actions + Epson Connect (laptop off for days)
+`alternatives/github-actions-newspaper.yml` (move it to `.github/workflows/` to enable) runs every morning on a free GitHub runner (Chrome preinstalled),
 builds the paper and emails the PDF to the printer. Setup, once:
 1. Printer: enable Epson Connect on the ET-2800 (Setup > Epson Connect Services > Register, or Epson Smart Panel).
    You get an address like `xxxx@print.epsonconnect.com`. At epsonconnect.com turn on the Approved Senders List
@@ -55,7 +55,9 @@ builds the paper and emails the PDF to the printer. Setup, once:
    `archive/` (the daily commit also keeps GitHub from pausing the schedule after 60 idle days).
 The cron is 11:30 UTC (06:30 Austin in summer, 05:30 in winter); edit the workflow to change it.
 
-## Option C: Claude Code cloud routine + Epson Connect
+## Option C (recommended, least setup): Claude Code cloud routine + Epson Connect
+Runs on your Claude subscription, no API key, no GitHub secrets. Needs Epson Connect on the printer and
+`SMTP_USER` / `SMTP_PASS` / `PRINTER_EMAIL` as environment variables on the cloud environment.
 1. Printer: enable Epson Connect on the ET-2800 (Setup > Epson Connect Services > Register, or via Epson Smart Panel).
    You get an address like `xxxx@print.epsonconnect.com`. At epsonconnect.com, turn on the Approved Senders List and add your Gmail.
 2. Gmail: create an App Password (myaccount.google.com/apppasswords) for SMTP sending.
