@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Today's weather for a US zip (or 'lat,lon') via zippopotam.us + Open-Meteo. No API key. Plain text output."""
-import json, os, sys, urllib.request
+import json, os, sys, math, datetime, pathlib, urllib.request
 
 loc = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("LOCATION", "")).strip()
 if not loc:
@@ -24,3 +24,35 @@ for i, label in enumerate(("TODAY", "TOMORROW")):
     print(f"{label} ({place}): {CODES.get(d['weather_code'][i], 'Mixed')}, high {round(d['temperature_2m_max'][i])}°F / low {round(d['temperature_2m_min'][i])}°F, "
           f"rain chance {d['precipitation_probability_max'][i]}%, wind up to {round(d['wind_speed_10m_max'][i])} mph, UV {d['uv_index_max'][i]}, "
           f"sunrise {d['sunrise'][i][-5:]}, sunset {d['sunset'][i][-5:]}")
+
+
+# ---- Moon phase (no API): days since a reference new moon, mod the synodic month ----
+def moon(today=None):
+    today = today or datetime.datetime.now(datetime.timezone.utc)
+    ref = datetime.datetime(2000, 1, 6, 18, 14, tzinfo=datetime.timezone.utc)
+    p = ((today - ref).total_seconds() / 86400 % 29.530588853) / 29.530588853  # 0 new, .5 full
+    lit = (1 - math.cos(2 * math.pi * p)) / 2
+    d = min(abs(p - k) for k in (0, 1)) ; q = 0.035  # within ~1 day of an exact phase gets its proper name
+    if d < q: name = "New moon"
+    elif abs(p - 0.5) < q: name = "Full moon"
+    elif abs(p - 0.25) < q: name = "First quarter"
+    elif abs(p - 0.75) < q: name = "Last quarter"
+    else: name = ("Waxing " if p < 0.5 else "Waning ") + ("crescent" if lit < 0.5 else "gibbous")
+    r, rx = 10, abs(math.cos(2 * math.pi * p)) * 10
+    waxing = p < 0.5
+    # lit region: half-disc on the lit side + terminator ellipse; sweep flags pick which way it bulges
+    if waxing:
+        path = f"M0,-{r} A{r},{r} 0 0 1 0,{r} A{rx:.2f},{r} 0 0 {0 if lit < 0.5 else 1} 0,-{r} Z"
+    else:
+        path = f"M0,-{r} A{r},{r} 0 0 0 0,{r} A{rx:.2f},{r} 0 0 {1 if lit < 0.5 else 0} 0,-{r} Z"
+    svg = (f'<svg class="moon" viewBox="-11 -11 22 22" width="14" height="14" aria-label="{name}">'
+           f'<circle r="{r}" fill="#111"/><path d="{path}" fill="#fff"/><circle r="{r}" fill="none" stroke="#111" stroke-width="1"/></svg>')
+    return name, lit, svg
+
+name, lit, svg = moon()
+try:
+    (pathlib.Path(__file__).resolve().parent.parent / "editions").mkdir(exist_ok=True)
+    (pathlib.Path(__file__).resolve().parent.parent / "editions" / "moon.svg").write_text(svg)
+except Exception:
+    pass
+print(f"MOON: {name}, {round(lit * 100)}% illuminated. In the weather strip write the literal token {{{{MOON}}}} followed by the phase name; the build step swaps in the icon.")

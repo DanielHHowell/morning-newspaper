@@ -15,6 +15,7 @@ body {
 .masthead .dateline { font-family: Helvetica, Arial, sans-serif; font-size: 8pt; letter-spacing: .12em; text-transform: uppercase; border-top: 1px solid #111; margin-top: 4pt; padding-top: 3pt; }
 .weather { display: flex; gap: 10pt; justify-content: space-between; font-family: Helvetica, Arial, sans-serif; font-size: 8pt; border: 1px solid #111; padding: 4pt 8pt; margin-bottom: 8pt; }
 .weather b { font-size: 10pt; }
+.weather svg.moon { vertical-align: -2px; margin-right: 3pt; }
 .lead { border-bottom: 1px solid #111; padding-bottom: 6pt; margin-bottom: 8pt; }
 .lead h2 { font-size: 22pt; line-height: 1.05; margin: 0 0 4pt; font-weight: 700; }
 .lead .deck { font-style: italic; font-size: 11pt; margin: 0 0 4pt; color: #333; }

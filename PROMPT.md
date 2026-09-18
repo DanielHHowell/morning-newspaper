@@ -28,7 +28,7 @@ Produce ONLY the body markup (no `<html>`, `<head>`, or `<style>`; the styleshee
   <h1>The Morning Newspaper</h1>
   <div class="dateline">Weekday, Month D, YYYY · Austin edition</div>
 </div>
-<div class="weather"><span><b>97°</b> / 78°</span><span>Overcast, 13% rain, wind 14 mph</span><span>Tomorrow: 96° / 78°, overcast</span><span>Sunrise 7:16 · Sunset 19:33</span></div>
+<div class="weather"><span><b>97°</b> / 78°</span><span>Overcast, 13% rain, wind 14 mph</span><span>Tomorrow: 96° / 78°, overcast</span><span>Sunrise 7:16 · Sunset 19:33</span><span>{{MOON}} Waxing gibbous</span></div>
 <div class="lead">
   <h2>Headline for the day's biggest story (world, markets, or feeds)</h2>
   <p class="deck">One-sentence deck.</p>

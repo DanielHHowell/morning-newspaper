@@ -25,7 +25,10 @@ reading = reading_path.read_text() if reading_path.exists() else ""
 
 def write_html(zoom, with_reading=True):
     extra = f"\n.front {{ zoom: {zoom}; }}" if zoom != 1 else ""
-    body = f'<div class="front">{body_path.read_text()}</div>' + (reading if with_reading else "")
+    front = body_path.read_text()
+    moon_svg = ROOT / "editions" / "moon.svg"
+    front = front.replace("{{MOON}}", moon_svg.read_text() if moon_svg.exists() else "")
+    body = f'<div class="front">{front}</div>' + (reading if with_reading else "")
     html_path.write_text(template.replace("{{CSS}}", css + extra).replace("{{BODY}}", body).replace("{{DATE}}", date))
 
 def page_count():
