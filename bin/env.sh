@@ -1,7 +1,7 @@
 # Shared environment for bin/*.sh: loads config.env when present, then fills in defaults so the
 # same scripts run on the laptop (config.env) and in CI (environment variables / secrets only).
 [[ -f config.env ]] && source ./config.env
-: "${LOCATION:=78745}"
+: "${LOCATION:=}"
 : "${READER_NAME:=Daniel}"
 : "${PRINTER:=}"
 : "${PAPER:=Letter}"
