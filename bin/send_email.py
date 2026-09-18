@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Email a PDF to the printer's Epson Connect address via SMTP.
 
-Env: SMTP_HOST (default smtp.gmail.com) SMTP_PORT (587) SMTP_USER SMTP_PASS PRINTER_EMAIL
+Env: SMTP_HOST (default smtp.gmail.com; any STARTTLS host, e.g. a cPanel mail server) SMTP_PORT (587) SMTP_USER SMTP_PASS PRINTER_EMAIL
 Usage: send_email.py file.pdf
 Gmail: create an App Password at https://myaccount.google.com/apppasswords and use it as SMTP_PASS.
 """

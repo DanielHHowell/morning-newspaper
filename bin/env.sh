@@ -13,7 +13,8 @@
 : "${TRUNCATE_WORDS:=1100}"
 : "${MIN_WORDS:=150}"
 : "${DRY_RUN:=0}"
+: "${PRINTER_EMAIL:=}" ; : "${SMTP_HOST:=smtp.gmail.com}" ; : "${SMTP_USER:=}" ; : "${SMTP_PASS:=}"
 : "${CLAUDE_BIN:=$(command -v claude || echo "$HOME/.local/bin/claude")}"
 : "${CHROME_BIN:=/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 [[ -x "${PY:-}" ]] || PY="$( [[ -x .venv/bin/python3 ]] && echo .venv/bin/python3 || echo python3 )"
-export LOCATION READER_NAME PRINTER PAPER MODEL STOCKS MAX_PAGES WORDS_PER_PAGE FULL_MAX_WORDS TRUNCATE_WORDS MIN_WORDS DRY_RUN CLAUDE_BIN CHROME_BIN PY
+export PRINTER_EMAIL SMTP_HOST SMTP_USER SMTP_PASS LOCATION READER_NAME PRINTER PAPER MODEL STOCKS MAX_PAGES WORDS_PER_PAGE FULL_MAX_WORDS TRUNCATE_WORDS MIN_WORDS DRY_RUN CLAUDE_BIN CHROME_BIN PY
