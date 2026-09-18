@@ -1,0 +1,5 @@
+# One feed URL per line. Or export OPML from Feeder (Settings > Export) and save it as feeds.opml instead.
+https://hnrss.org/frontpage?points=100
+https://feeds.arstechnica.com/arstechnica/index
+https://www.theverge.com/rss/index.xml
+https://simonwillison.net/atom/everything/

@@ -1,0 +1,8 @@
+editions/*.html
+editions/*.json
+editions/*.pdf
+logs/
+config.env
+.venv/
+.DS_Store
+editions/feeds-cache.json

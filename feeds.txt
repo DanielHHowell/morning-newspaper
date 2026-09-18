@@ -1,0 +1,15 @@
+# Daniel's feeds (from Feeder, 2026-09-17). Active ones only.
+# Dropped: reddit multis, Blank Horizons, Qualia Computing, Real Life, ribbonfarm, synthetic zero (dormant),
+#          Laetus in Praesens (no feed), Real Python / Hacker Noon / Cointelegraph (by request).
+https://terenceblake.wordpress.com/feed/
+https://aeon.co/feed.rss
+https://fs.blog/feed/
+https://www.producthunt.com/feed
+https://psyche.co/feed
+https://api.quantamagazine.org/feed/
+http://feeds.feedburner.com/blogspot/FHhv
+https://tricycle.org/feed/
+# Replacements for dead feed URLs in the Feeder list:
+https://nautil.us/feed/
+https://longreads.com/feed/
+https://www.astralcodexten.com/feed

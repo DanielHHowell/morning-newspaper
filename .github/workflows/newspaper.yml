@@ -1,0 +1,55 @@
+name: Morning Newspaper
+
+on:
+  schedule:
+    # 11:30 UTC = 06:30 Austin during daylight time (CDT), 05:30 during standard time (CST).
+    - cron: "30 11 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  print:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      PRINTER_EMAIL: ${{ secrets.PRINTER_EMAIL }}
+      TZ: America/Chicago
+      MODEL: sonnet
+      MAX_PAGES: "10"
+      PY: python3
+      CLAUDE_BIN: claude
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Install tools
+        run: |
+          pip install -q trafilatura qrcode
+          npm install -g @anthropic-ai/claude-code
+          google-chrome --version
+      - name: Write the edition
+        run: bin/generate.sh
+      - name: Build the PDF and email it to the printer
+        run: |
+          if [ -z "$PRINTER_EMAIL" ]; then export DRY_RUN=1; echo "PRINTER_EMAIL not set: building only"; fi
+          bin/print.sh
+      - name: Keep the PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: newspaper-${{ github.run_id }}
+          path: editions/*.pdf
+          retention-days: 30
+      - name: Archive to the repo (keeps the schedule alive)
+        run: |
+          d=$(date +%F)
+          mkdir -p archive && cp "editions/$d.pdf" "archive/$d.pdf"
+          ls -t archive/*.pdf | tail -n +31 | xargs -r rm --   # keep the last 30
+          git config user.name "morning-newspaper[bot]" && git config user.email "bot@users.noreply.github.com"
+          git add archive && git commit -m "edition $d [skip ci]" && git push || echo "nothing to commit"
