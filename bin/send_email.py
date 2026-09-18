@@ -14,7 +14,7 @@ if not (user and pw and to):
     sys.exit("set SMTP_USER, SMTP_PASS and PRINTER_EMAIL")
 
 msg = EmailMessage()
-msg["From"], msg["To"], msg["Subject"] = user, to, f"The Morning Newspaper {pdf.stem}"
+msg["From"], msg["To"], msg["Subject"] = user, to, f"The Morning Newspaper {pdf.stem.replace('.print', '')}"
 msg.set_content("Attached: today's edition.")  # Epson prints attachments; body text is ignored unless you enable it
 msg.add_attachment(pdf.read_bytes(), maintype="application", subtype="pdf", filename=pdf.name)
 

@@ -10,6 +10,7 @@ MAX_PAGES="$MAX_PAGES" WORDS_PER_PAGE="$WORDS_PER_PAGE" FULL_MAX_WORDS="$FULL_MA
   "$PY" bin/reader.py "$DATE" || echo "reader failed; printing front page only" >&2
 PAPER="$PAPER" CHROME_BIN="$CHROME_BIN" MAX_PAGES="$MAX_PAGES" python3 bin/build.py "$DATE"
 PDF="editions/$DATE.pdf"
+[[ -f "editions/$DATE.print.pdf" ]] && PDF="editions/$DATE.print.pdf"   # reversed page order (see build.py)
 
 if [[ "${DRY_RUN:-0}" == "1" ]]; then echo "DRY_RUN=1: built $PDF, not printing"; exit 0; fi
 

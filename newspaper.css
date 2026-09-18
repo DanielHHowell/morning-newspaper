@@ -1,5 +1,6 @@
 /* The Morning Newspaper – print stylesheet. Letter/A4, 3-column broadsheet feel. */
-@page { size: Letter; margin: 12mm 12mm 10mm 12mm; }
+@page { size: Letter; margin: 12mm 12mm 12mm 12mm;
+  @bottom-center { content: "The Morning Newspaper  ·  page " counter(page) " of " counter(pages); font-family: Helvetica, Arial, sans-serif; font-size: 7pt; letter-spacing: .08em; color: #555; } }
 @page :first { margin-top: 10mm; }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }

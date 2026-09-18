@@ -75,6 +75,8 @@ and trims the last article paragraph by paragraph until the PDF is within `MAX_P
 fully. Bylines show author · site · publish date. `MAX_PAGES=1` gives the front page only.
 
 ## Paper
+Pages carry a "page N of M" footer. build.py also writes `DATE.print.pdf` with the page order reversed, which print.sh
+sends, because the ET-2800 stacks face-up and would otherwise leave page 1 at the bottom (`REVERSE_PAGES=0` to disable).
 The ET-2800 has no automatic duplex (it reports `sides-supported = one-sided`), so the morning print is
 single-sided and `MAX_PAGES` is also the sheet count.
 

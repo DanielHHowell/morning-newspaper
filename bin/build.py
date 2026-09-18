@@ -123,5 +123,16 @@ while name and reading:
     print(f"{pages} pages > MAX_PAGES={max_pages}: {how} last article's tail ({steps})", file=sys.stderr)
 if name:
     print(f"{pdf_path} (via {name}, front zoom {zoom}, {page_count()} pages total)")
+    # Printers that stack face-up leave page 1 at the bottom; send a reversed copy so the stack reads in order.
+    if os.environ.get("REVERSE_PAGES", "1") == "1":
+        try:
+            from pypdf import PdfReader, PdfWriter
+            r = PdfReader(str(pdf_path)); w = PdfWriter()
+            for pg in reversed(r.pages): w.add_page(pg)
+            out = pdf_path.with_suffix(".print.pdf")
+            with open(out, "wb") as f: w.write(f)
+            print(f"{out} (pages reversed for face-up output trays)")
+        except ImportError:
+            print("pypdf not installed: no reversed copy", file=sys.stderr)
 else:
     sys.exit("no PDF renderer available: install Chrome, `pip install weasyprint`, or `pip install playwright && playwright install chromium`")

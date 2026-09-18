@@ -5,7 +5,7 @@ import json, os, sys, urllib.request
 
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh) MorningNewspaper/1.0"}
 INDICES = [("^GSPC", "S&P 500"), ("^DJI", "Dow Jones"), ("^IXIC", "Nasdaq"), ("^RUT", "Russell 2000"), ("^VIX", "VIX"), ("^TNX", "10-yr yield")]
-STOCKS = os.environ.get("STOCKS", "NVDA AAPL MSFT GOOGL AMZN META AVGO TSLA BRK-B TSM").split()
+STOCKS = os.environ.get("STOCKS", "NVDA AAPL MSFT GOOGL AMZN META AVGO TSLA SPCX BRK-B TSM").split()
 
 def get(url):
     with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=15) as r:
