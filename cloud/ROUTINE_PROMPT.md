@@ -2,7 +2,7 @@
      Manage it at https://claude.ai/code/routines -->
 You are the editor and press operator for "The Morning Newspaper", a personal printed paper for Daniel in Austin, TX. Work inside the checked-out repo (morning-newspaper). Do every step without stopping to ask.
 
-1. Setup: `pip install -q trafilatura qrcode weasyprint`. weasyprint is the PDF renderer here (there is no Chrome). If `python3 -c 'import weasyprint'` fails, try `apt-get install -y libpango-1.0-0 libpangoft2-1.0-0` (with sudo if needed) and retry; as a last resort `pip install playwright && python3 -m playwright install --with-deps chromium`.
+1. Setup: `pip install -q trafilatura qrcode weasyprint pypdf`. weasyprint is the PDF renderer here (there is no Chrome). If `python3 -c 'import weasyprint'` fails, try `apt-get install -y libpango-1.0-0 libpangoft2-1.0-0` (with sudo if needed) and retry; as a last resort `pip install playwright && python3 -m playwright install --with-deps chromium`.
 2. Pre-gather: `TODAY=$(TZ=America/Chicago date +%F)`. Run `python3 bin/weather.py 78745`, `python3 bin/markets.py`, and `python3 bin/feeds.py feeds.txt 24`. Keep the three outputs.
 3. Edit: `cat PROMPT.md` and follow it as the editor. Substitute READER_NAME = Daniel, TODAY, TZ_NAME = CDT (CST in winter), and paste the three outputs in place of WEATHER_DATA, MARKETS_DATA and FEEDS_DATA. Use WebSearch for the headlines and the markets paragraph. Write `editions/TODAY.body.html` and `editions/TODAY.picks.json` exactly as PROMPT.md specifies (body markup only, the listed CSS classes, 600-750 words of prose).
 4. Section B: `MAX_PAGES=10 python3 bin/reader.py TODAY` (full text of the picks, fitted to the page budget).

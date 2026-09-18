@@ -29,6 +29,11 @@ def write_html(zoom, with_reading=True):
     html_path.write_text(template.replace("{{CSS}}", css + extra).replace("{{BODY}}", body).replace("{{DATE}}", date))
 
 def page_count():
+    try:  # exact, and required for weasyprint output (compressed object streams defeat the regex)
+        from pypdf import PdfReader
+        return len(PdfReader(str(pdf_path)).pages)
+    except ImportError:
+        pass
     import re
     return len(re.findall(rb"/Type\s*/Page(?![s/])", pdf_path.read_bytes()))
 

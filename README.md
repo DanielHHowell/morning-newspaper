@@ -26,7 +26,7 @@ config.env         your settings (gitignored)
 ## Try it now (laptop on)
 ```
 cp feeds.txt.example feeds.txt   # or export OPML from Feeder and save as feeds.opml
-python3 -m venv .venv && .venv/bin/pip install trafilatura qrcode   # for Section B
+python3 -m venv .venv && .venv/bin/pip install trafilatura qrcode pypdf   # for Section B
 DRY_RUN=1 bin/run.sh && open editions/$(date +%F).pdf
 bin/print.sh      # sends today's PDF to the Epson via CUPS
 ```
