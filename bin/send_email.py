@@ -19,10 +19,29 @@ pdf = None if test else pathlib.Path(sys.argv[1])
 if not (user and pw and (to or test)):
     sys.exit("set SMTP_USER, SMTP_PASS and PRINTER_EMAIL")
 
+def resolve(h):
+    """Normal DNS, else DNS-over-HTTPS (some CI runners can't reach small authoritative nameservers)."""
+    if os.environ.get("FORCE_DOH") != "1":
+        try:
+            socket.getaddrinfo(h, None); return h
+        except socket.gaierror:
+            pass
+    import json, urllib.request
+    for url in (f"https://dns.google/resolve?name={h}&type=A", f"https://cloudflare-dns.com/dns-query?name={h}&type=A"):
+        try:
+            req = urllib.request.Request(url, headers={"accept": "application/dns-json"})
+            ans = json.load(urllib.request.urlopen(req, timeout=10)).get("Answer", [])
+            ips = [a["data"] for a in ans if a.get("type") == 1]
+            if ips:
+                print(f"resolved {h} -> {ips[0]} via DNS-over-HTTPS", file=sys.stderr); return ips[0]
+        except Exception:
+            continue
+    return h
+
 def open_socket(h, p, timeout):
     proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
     if not proxy:
-        return socket.create_connection((h, p), timeout)
+        return socket.create_connection((resolve(h), p), timeout)
     u = urllib.parse.urlparse(proxy)
     s = socket.create_connection((u.hostname, u.port or 3128), timeout)
     s.sendall(f"CONNECT {h}:{p} HTTP/1.1\r\nHost: {h}:{p}\r\n\r\n".encode())
