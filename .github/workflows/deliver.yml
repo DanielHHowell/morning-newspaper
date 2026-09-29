@@ -1,0 +1,40 @@
+name: Deliver to printer
+
+# The cloud routine builds the paper and pushes archive/DATE.pdf. Its sandbox can't reach SMTP,
+# so this job (open network) emails the newest archived edition to the printer's Epson Connect address.
+on:
+  push:
+    paths: ["archive/*.pdf"]
+  workflow_dispatch: {}
+
+concurrency: deliver
+
+jobs:
+  email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q pypdf
+      - name: Reverse pages (face-up output tray) and email
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          PRINTER_EMAIL: ${{ secrets.PRINTER_EMAIL }}
+        run: |
+          set -e
+          latest=$(ls archive/*.pdf | sort | tail -1)
+          echo "delivering $latest"
+          python3 - "$latest" <<'PY'
+          import sys, pathlib
+          from pypdf import PdfReader, PdfWriter
+          src = pathlib.Path(sys.argv[1]); w = PdfWriter()
+          for p in reversed(PdfReader(str(src)).pages): w.add_page(p)
+          out = pathlib.Path("/tmp") / (src.stem + ".print.pdf")
+          with open(out, "wb") as f: w.write(f)
+          print(out)
+          PY
+          python3 bin/send_email.py "/tmp/$(basename "${latest%.pdf}").print.pdf"
