@@ -44,6 +44,7 @@ def chrome():
     candidates = [os.environ.get("CHROME_BIN"),
                   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
                   "/Applications/Chromium.app/Contents/MacOS/Chromium",
+                  "/opt/pw-browsers/chromium",  # present in Claude's cloud sandbox
                   shutil.which("google-chrome"), shutil.which("chromium"), shutil.which("chromium-browser")]
     for c in candidates:
         if c and os.path.exists(c):
