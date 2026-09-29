@@ -14,11 +14,14 @@ A Claude Code cloud routine fires daily (`0 14 * * *` UTC, 9am Central), clones 
 1. runs `bin/weather.py`, `bin/markets.py`, `bin/feeds.py` (all key-free public sources)
 2. acts as the editor per `PROMPT.md`, writing `editions/DATE.body.html` and a ranked `picks.json`
 3. `bin/reader.py` fetches the picked articles' full text and fits them to the page budget
-4. `bin/build.py` renders the PDF and a page-reversed copy for the face-up output tray
-5. `bin/send_email.py` emails the PDF to the printer's Epson Connect address
+4. `bin/build.py` renders the PDF (sandbox Chromium) and commits it to `archive/`, then pushes
+5. that push triggers `.github/workflows/deliver.yml`, which reverses the pages for the face-up output
+   tray and emails the PDF to the printer's Epson Connect address with `bin/send_email.py`
 
-The routine's prompt is in `cloud/ROUTINE_PROMPT.md` (credentials live only in the live routine).
-The cloud environment needs **Network access: Full**, otherwise the data fetches and SMTP are blocked.
+The cloud sandbox can't open SMTP connections (its egress proxy resets mail ports even with Network
+access set to Full, which is still required for the data fetches), hence the hand-off to GitHub Actions.
+Mail credentials and the printer address are GitHub Actions secrets: `SMTP_HOST`, `SMTP_USER`,
+`SMTP_PASS`, `PRINTER_EMAIL`. The routine's prompt is in `cloud/ROUTINE_PROMPT.md`.
 
 ## Files
 
