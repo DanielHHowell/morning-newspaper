@@ -5,10 +5,10 @@ Reads  editions/DATE.picks.json  : [{"url","feed","title","why"}, ...]  ranked b
 Writes editions/DATE.reading.html : body markup for the reading section
 
 Budget strategy (env, see config.env):
-  MAX_PAGES        total pages incl. the front page (default 10) -> budget = (MAX_PAGES-1) * WORDS_PER_PAGE
+  MAX_PAGES        total pages incl. the front page (default 3) -> budget = (MAX_PAGES-1) * WORDS_PER_PAGE
   WORDS_PER_PAGE   ~800 at our 2-column 9.5pt layout (build.py also enforces MAX_PAGES on the rendered PDF)
-  FULL_MAX_WORDS   articles up to this length print in full (default 2200, ~2.5 pages)
-  TRUNCATE_WORDS   longer ones are cut at a paragraph boundary near this length (default 1100) + QR to the rest
+  FULL_MAX_WORDS   articles up to this length print in full (default 300)
+  TRUNCATE_WORDS   longer ones are cut at a paragraph boundary near this length (default 300: an excerpt) + QR to the rest
   MIN_WORDS        skip stubs / paywalls / link posts below this (default 150)
 Walk the picks in order; add each until the budget is spent. If the next article doesn't fit, cut it to the
 remaining room when there are >= 350 words left, otherwise stop.
@@ -23,8 +23,8 @@ date = sys.argv[1] if len(sys.argv) > 1 else datetime.date.today().isoformat()
 picks_path = ROOT / "editions" / f"{date}.picks.json"
 out_path = ROOT / "editions" / f"{date}.reading.html"
 E = lambda k, d: int(os.environ.get(k) or d)
-MAX_PAGES, WPP = E("MAX_PAGES", 10), E("WORDS_PER_PAGE", 800)
-FULL_MAX, TRUNC, MIN_WORDS = E("FULL_MAX_WORDS", 2200), E("TRUNCATE_WORDS", 1100), E("MIN_WORDS", 150)
+MAX_PAGES, WPP = E("MAX_PAGES", 3), E("WORDS_PER_PAGE", 800)
+FULL_MAX, TRUNC, MIN_WORDS = E("FULL_MAX_WORDS", 300), E("TRUNCATE_WORDS", 300), E("MIN_WORDS", 150)
 BUDGET = int(max(0, (MAX_PAGES - 1) * WPP) * 1.15)  # overshoot a little; build.py trims the tail to the page cap
 
 if not picks_path.exists() or BUDGET == 0:
@@ -62,6 +62,11 @@ def paragraphs(txt, title=""):
     paras = [x.strip() for x in re.split(r"\n\s*\n|\n", txt) if len(x.strip().split()) >= 3]
     norm = lambda z: re.sub(r"\W+", " ", z).strip().lower()
     paras = [re.sub(r"\s*Read (Article|More)\s*>?\s*$", "", x) for x in paras]
+    NOISE = re.compile(r"^(read more|listen on|listen to|subscribe|sign up|share this|follow us|related:|see also|advertisement|sponsored)", re.I)
+    paras = [x for x in paras if not NOISE.match(x)]
+    for i, x in enumerate(paras):  # a related-links block ends the useful text
+        if re.match(r"^(more (picks|stories|from)|related (stories|reading|articles)|you might also like|recommended)", x, re.I) and i > 0:
+            paras = paras[:i]; break
     while paras and (re.match(r"^\d{1,2}(st|nd|rd|th)? \w+ \d{4}", paras[0]) or re.match(r"^\w+ \d{1,2}, \d{4}", paras[0])
                      or re.search(r"\b(listen|minute read|min read|share this|subscribe)\b", paras[0], re.I) or len(paras[0].split()) <= 4):
         paras.pop(0)  # leading date line, audio-player / read-time / share widgets
@@ -75,12 +80,24 @@ def is_subhead(para):
     return len(para.split()) <= 8 and not para.rstrip().endswith((".", ":", "?", "!", "\"", "\u201d")) and not para.startswith(("-", "•"))
 
 def cut(paras, limit):
-    """Keep whole paragraphs up to `limit` words."""
+    """Keep whole paragraphs up to `limit` words; if the next paragraph would overshoot by a lot,
+    keep its leading sentences instead so short excerpt limits still fill their space."""
     out, n = [], 0
     for para in paras:
         w = len(para.split())
-        if n + w > limit and out: break
-        out.append(para); n += w
+        if n + w <= limit:
+            out.append(para); n += w; continue
+        room = limit - n
+        if room >= 40:
+            sentences = re.split(r"(?<=[.!?])\s+", para)
+            keep, k = [], 0
+            for sent in sentences:
+                sw = len(sent.split())
+                if k + sw > room: break
+                keep.append(sent); k += sw
+            if keep:
+                out.append(" ".join(keep)); n += k
+        break
     return out, n
 
 def qr(url):
@@ -108,7 +125,7 @@ for p, txt, meta in fetched:
     articles.append(dict(p, body=body, words=n, total=total, truncated=truncated, author=author, src=src, date=pub))
     if used >= BUDGET: break
 
-parts = [f'<div class="reading"><div class="reading-head"><span>The Morning Newspaper · Section B</span><span>The Reading · {len(articles)} articles · ~{used} words</span><span>{date}</span></div>']
+parts = [f'<div class="reading"><div class="reading-head"><span>The Morning Newspaper · Section B</span><span>The Reading · {len(articles)} articles</span><span>{date}</span></div>']
 for a in articles:
     kicker = html.escape(a.get("feed", "") or a["src"])
     by = " · ".join(x for x in (html.escape(a["author"]), html.escape(a["src"]), html.escape(a["date"])) if x)

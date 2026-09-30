@@ -3,7 +3,7 @@
 A personal newspaper, printed every morning at 9 while the laptop stays off.
 Front page: weather and moon, a lead story, world and tech headlines, a markets table with a
 why-it-moved paragraph, "on this day", and one-line picks from my RSS feeds. Then Section B:
-the full text of the best feed articles, fitted to a 10-page budget.
+opening excerpts of the best feed articles with QR codes to the rest, fitted to a 3-page budget.
 
 Inspired by [newspaper.karenx.com](https://newspaper.karenx.com/), built without Grok.
 
@@ -57,9 +57,9 @@ bin/print.sh                                            # and send to the printe
 |---|---|---|
 | `LOCATION` | zip | weather strip location |
 | `STOCKS` | NVDA AAPL MSFT GOOGL AMZN META AVGO TSLA SPCX BRK-B TSM | markets table |
-| `MAX_PAGES` | 10 | total pages incl. front page; also the sheet count (no duplex) |
-| `FULL_MAX_WORDS` | 2200 | articles up to this length print whole |
-| `TRUNCATE_WORDS` | 1100 | longer ones are cut near here, with a QR code to the rest |
+| `MAX_PAGES` | 3 | total pages incl. front page; also the sheet count (no duplex) |
+| `FULL_MAX_WORDS` | 300 | articles up to this length print whole |
+| `TRUNCATE_WORDS` | 300 | longer ones are cut near here (an excerpt), with a QR code to the rest |
 | `MIN_WORDS` | 150 | skip stubs and paywalls |
 | `REVERSE_PAGES` | 1 | write the page-reversed print copy |
 | `MODEL` | sonnet | editor model for local runs |

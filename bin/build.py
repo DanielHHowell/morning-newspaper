@@ -95,7 +95,7 @@ for zoom in (1, 0.95, 0.9, 0.85, 0.8, 0.75):
 # Hard page cap: render with the reading section; while over MAX_PAGES, trim the last article one paragraph
 # at a time (swapping in its "continued online" QR block), dropping it only when almost nothing is left.
 import re
-max_pages = int(os.environ.get("MAX_PAGES") or 10)
+max_pages = int(os.environ.get("MAX_PAGES") or 3)
 ELEM = re.compile(r"<(?:p|h4)[^>]*>.*?</(?:p|h4)>", re.S)
 
 def trim_last_article(reading):
@@ -114,8 +114,13 @@ def trim_last_article(reading):
     art = re.sub(r'<template class="cont">(.*?)</template>', r"\1", art, count=1, flags=re.S)
     return reading[:i] + art, "trimmed"
 
+def fix_header(reading):
+    n = reading.count("<article")
+    return re.sub(r"The Reading · \d+ articles?", f"The Reading · {n} article{'s' if n != 1 else ''}", reading)
+
 steps = 0
 while name and reading:
+    reading = fix_header(reading)
     write_html(zoom, with_reading=True)
     pdf_path.unlink()
     name = render()
