@@ -11,7 +11,7 @@ Inspired by [newspaper.karenx.com](https://newspaper.karenx.com/), built without
 
 A Claude Code cloud routine fires weekdays (`45 13 * * 1-5` UTC, 8:45am CDT, so the paper prints by ~9), clones this repo, and:
 
-1. runs `bin/weather.py`, `bin/markets.py`, `bin/feeds.py` (all key-free public sources)
+1. runs `bin/weather.py`, `bin/markets.py`, `bin/feeds.py` on `feeds.txt` and `headlines.txt` (all key-free public sources; weather falls back to the National Weather Service)
 2. acts as the editor per `PROMPT.md`, writing `editions/DATE.body.html` and a ranked `picks.json`
 3. `bin/reader.py` fetches the picked articles' full text and fits them to the page budget
 4. `bin/build.py` renders the PDF (sandbox Chromium) and commits it to `archive/`, then pushes

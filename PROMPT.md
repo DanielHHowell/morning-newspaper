@@ -10,8 +10,11 @@ MARKETS_DATA
 FEEDS (the reader's RSS subscriptions, last 24h):
 FEEDS_DATA
 
+HEADLINES (news wires: BBC, NPR, NYT, Guardian, Ars Technica, Techmeme, CNBC; last 18h):
+HEADLINES_DATA
+
 ## Gather (read-only; never mark feeds read)
-1. **Headlines**: run 2–3 WebSearch queries ("top news today", "tech news today", plus one topic drawn from the reader's feeds) and pick 4 stories. 2 plain, factual sentences each in your own words, source name in the byline.
+1. **Headlines**: pick 4 stories (world and tech) from the HEADLINES data above, favoring ones carried by several outlets. Use at most 2–3 WebSearch queries only to fill in details for those stories, not to find stories. Don't pass `allowed_domains` with reuters.com, apnews.com or theverge.com (the search tool refuses them). 2 plain, factual sentences each in your own words, with the outlet's name in the byline. If HEADLINES is empty or errored, fall back to WebSearch ("top news today", "tech news today").
 2. **Money**: run one WebSearch for "stock market today" / "markets news" and write a 3–4 sentence "Markets" paragraph explaining what moved and why, using the MARKETS data above for the numbers.
 3. **From the feeds**: from the FEEDS data above, pick the 6–8 most interesting posts, grouped by feed, one line each (title + a half-sentence of why it matters). Skip deals/promo posts. If FEEDS says no feeds are configured, use a notice. This section goes LAST on the page, just above the footer. Label it "From the Feeds · full text in Section B".
    **Also** rank the 12 best posts for full-text reading (favor substantive essays, reporting and technical write-ups; skip link-only posts, deals, videos, podcasts) and save them with the Write tool as JSON to `editions/TODAY.picks.json`: a list of objects `{"url": ..., "feed": ..., "title": ..., "why": one short sentence}`, best first. Use the exact `url:` values from FEEDS.

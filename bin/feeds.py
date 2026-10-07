@@ -73,7 +73,9 @@ for folder, title, recent, err in results:
         cache[link] = {"feed": title, "title": t, "date": d.isoformat()}
 try:
     (ROOT / "editions").mkdir(exist_ok=True)
-    json.dump(cache, open(ROOT / "editions" / "feeds-cache.json", "w"))
+    # reader.py reads feeds-cache.json; other lists (headlines.txt) get their own cache so they don't clobber it
+    name = "feeds-cache.json" if path.stem == "feeds" else f"{path.stem}-cache.json"
+    json.dump(cache, open(ROOT / "editions" / name, "w"))
 except Exception:
     pass
 for folder, title, recent, err in sorted(results, key=lambda r: (r[0], r[1])):

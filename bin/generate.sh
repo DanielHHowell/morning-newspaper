@@ -10,12 +10,13 @@ WEATHER_DATA="$(LOCATION="$LOCATION" python3 bin/weather.py 2>&1 || echo "(weath
 [[ -n "$WEATHER_DATA" ]] || WEATHER_DATA="(no location configured; skip the weather strip)"
 MARKETS_DATA="$(STOCKS="$STOCKS" python3 bin/markets.py 2>&1 || echo "(markets unavailable)")"
 FEEDS_DATA="$(python3 bin/feeds.py 2>&1 || echo "(feeds unavailable)")"
+HEADLINES_DATA="$(python3 bin/feeds.py headlines.txt 18 2>&1 || echo "(headlines unavailable)")"
 
-PROMPT="$(python3 - "$DATE" "$TZ_NAME" "$READER_NAME" "$WEATHER_DATA" "$MARKETS_DATA" "$FEEDS_DATA" <<'PY'
+PROMPT="$(python3 - "$DATE" "$TZ_NAME" "$READER_NAME" "$WEATHER_DATA" "$MARKETS_DATA" "$FEEDS_DATA" "$HEADLINES_DATA" <<'PY'
 import sys, pathlib
-date, tz, name, weather, markets, feeds = sys.argv[1:7]
+date, tz, name, weather, markets, feeds, headlines = sys.argv[1:8]
 s = pathlib.Path("PROMPT.md").read_text()
-for k, v in (("READER_NAME", name), ("TODAY", date), ("TZ_NAME", tz), ("WEATHER_DATA", weather), ("MARKETS_DATA", markets), ("FEEDS_DATA", feeds)):
+for k, v in (("READER_NAME", name), ("TODAY", date), ("TZ_NAME", tz), ("WEATHER_DATA", weather), ("MARKETS_DATA", markets), ("FEEDS_DATA", feeds), ("HEADLINES_DATA", headlines)):
     s = s.replace(k, v)
 print(s)
 PY

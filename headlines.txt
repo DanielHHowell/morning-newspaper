@@ -1,0 +1,8 @@
+# Headline wires for the front page (bin/feeds.py headlines.txt 18). WebSearch fills in details.
+https://feeds.bbci.co.uk/news/world/rss.xml
+https://feeds.npr.org/1001/rss.xml
+https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml
+https://www.theguardian.com/world/rss
+https://feeds.arstechnica.com/arstechnica/index
+https://www.techmeme.com/feed.xml
+https://www.cnbc.com/id/20910258/device/rss/rss.html
