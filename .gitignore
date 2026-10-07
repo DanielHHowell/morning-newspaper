@@ -7,3 +7,4 @@ config.env
 .DS_Store
 editions/feeds-cache.json
 editions/moon.svg
+__pycache__/
