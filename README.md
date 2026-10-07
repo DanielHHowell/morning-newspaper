@@ -9,7 +9,7 @@ Inspired by [newspaper.karenx.com](https://newspaper.karenx.com/), built without
 
 ## How it runs
 
-A Claude Code cloud routine fires daily (`0 14 * * *` UTC, 9am Central), clones this repo, and:
+A Claude Code cloud routine fires weekdays (`45 13 * * 1-5` UTC, 8:45am CDT, so the paper prints by ~9), clones this repo, and:
 
 1. runs `bin/weather.py`, `bin/markets.py`, `bin/feeds.py` (all key-free public sources)
 2. acts as the editor per `PROMPT.md`, writing `editions/DATE.body.html` and a ranked `picks.json`
